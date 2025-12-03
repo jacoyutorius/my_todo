@@ -19,18 +19,30 @@ function App() {
   };
 
   useEffect(() => {
-    if (directoryHandle) {
-      const today = getTodayFilename();
-      if (files.includes(today)) {
-        handleSelectFile(today);
-      } else {
-        // Create today's file if it doesn't exist
-        const initialContent = `# ${today.replace('.md', '')}\n\n`;
-        writeFile(today, initialContent).then(() => {
+    const initToday = async () => {
+      if (directoryHandle) {
+        const today = getTodayFilename();
+
+        // Check if file exists in list first (optimization)
+        if (files.includes(today)) {
           handleSelectFile(today);
-        });
+          return;
+        }
+
+        // If not in list, try to read it to be sure (avoid overwrite race condition)
+        const existingContent = await readFile(today);
+
+        if (existingContent !== null) {
+          handleSelectFile(today);
+        } else {
+          // Create today's file if it really doesn't exist
+          const initialContent = `# ${today.replace('.md', '')}\n\n`;
+          await writeFile(today, initialContent);
+          handleSelectFile(today);
+        }
       }
-    }
+    };
+    initToday();
   }, [directoryHandle, files.length]); // Check when directory or files list changes
 
   const handleSelectFile = async (filename: string) => {
