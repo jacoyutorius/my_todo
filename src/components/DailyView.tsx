@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import confetti from 'canvas-confetti';
 
 interface DailyViewProps {
   date: string;
@@ -11,7 +12,6 @@ interface DailyViewProps {
 export const DailyView: React.FC<DailyViewProps> = ({ date, content, onSave }) => {
   const [lines, setLines] = useState<string[]>([]);
   const [newTask, setNewTask] = useState('');
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     setLines(content.split('\n'));
@@ -22,6 +22,12 @@ export const DailyView: React.FC<DailyViewProps> = ({ date, content, onSave }) =
     const line = newLines[index];
     if (line.startsWith('- [ ] ')) {
       newLines[index] = line.replace('- [ ] ', '- [x] ');
+      // Trigger confetti when completing a task
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
     } else if (line.startsWith('- [x] ')) {
       newLines[index] = line.replace('- [x] ', '- [ ] ');
     }
