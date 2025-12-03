@@ -1,10 +1,14 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { get, set } from 'idb-keyval';
 
 // Types for File System Access API (if not globally available)
 // These are usually available in modern environments but good to have for reference
 interface FileSystemHandle {
   kind: 'file' | 'directory';
   name: string;
+  isSameEntry(other: FileSystemHandle): Promise<boolean>;
+  queryPermission(descriptor: { mode: 'read' | 'readwrite' }): Promise<PermissionState>;
+  requestPermission(descriptor: { mode: 'read' | 'readwrite' }): Promise<PermissionState>;
 }
 
 interface FileSystemFileHandle extends FileSystemHandle {
@@ -34,11 +38,46 @@ declare global {
 export const useFileSystem = () => {
   const [directoryHandle, setDirectoryHandle] = useState<FileSystemDirectoryHandle | null>(null);
   const [files, setFiles] = useState<string[]>([]);
+  const [isReady, setIsReady] = useState(false);
+
+  // Restore handle on mount
+  useEffect(() => {
+    const restoreHandle = async () => {
+      try {
+        const handle = await get<FileSystemDirectoryHandle>('directoryHandle');
+        if (handle) {
+          // Verify permission
+          const permission = await verifyPermission(handle, true);
+          if (permission) {
+            setDirectoryHandle(handle);
+            await loadFiles(handle);
+          }
+        }
+      } catch (error) {
+        console.error('Error restoring directory handle:', error);
+      } finally {
+        setIsReady(true);
+      }
+    };
+    restoreHandle();
+  }, []);
+
+  const verifyPermission = async (handle: FileSystemDirectoryHandle, withWrite: boolean) => {
+    const options = { mode: withWrite ? 'readwrite' : 'read' } as const;
+    if ((await handle.queryPermission(options)) === 'granted') {
+      return true;
+    }
+    if ((await handle.requestPermission(options)) === 'granted') {
+      return true;
+    }
+    return false;
+  };
 
   const selectDirectory = useCallback(async () => {
     try {
       const handle = await window.showDirectoryPicker();
       setDirectoryHandle(handle);
+      await set('directoryHandle', handle); // Save handle
       await loadFiles(handle);
     } catch (error) {
       console.error('Error selecting directory:', error);
@@ -91,5 +130,6 @@ export const useFileSystem = () => {
     selectDirectory,
     readFile,
     writeFile,
+    isReady,
   };
 };
