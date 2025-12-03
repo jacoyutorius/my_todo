@@ -1,73 +1,52 @@
-# React + TypeScript + Vite
+<div align="center">
+  <img src="public/favicon.png" alt="Daily TODO Logo" width="120" height="120">
+  <h1>Daily TODO</h1>
+  <p>
+    <b>Simple, Local, Markdown-based TODO App</b>
+  </p>
+</div>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Daily TODOは、File System Access APIを活用したローカル完結型の日次TODOリストアプリケーションです。
+あなたのPC内の指定したフォルダに、日ごとのMarkdownファイルとしてタスクを保存・管理します。
 
-Currently, two official plugins are available:
+## ✨ 特徴
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **🔒 プライバシー重視**: データは全てあなたのローカルPC内に保存されます。サーバーには送信されません。
+- **📝 Markdown形式**: データは標準的なMarkdownファイル(`YYYY-MM-DD.md`)として保存されるため、他のエディタでも閲覧・編集可能です。
+- **📂 ディレクトリ管理**: 好きなフォルダを作業ディレクトリとして指定できます。
+- **🎨 モダンなUI**: Vanilla CSSによる、美しくシンプルなダークモードデザイン。
 
-## React Compiler
+## 🚀 使い方
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1. アプリを開きます。
+2. 「フォルダを選択」ボタンをクリックし、タスクを保存したいローカルフォルダを選択します。
+3. ブラウザの権限リクエスト（ファイルの表示・編集）を許可します。
+4. 今日の日付のファイルが自動作成され、TODOリストが表示されます。
+5. タスクを追加したり、チェックを入れたりして管理しましょう。
 
-## Expanding the ESLint configuration
+## 🛠️ 技術スタック
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Frontend**: React, TypeScript
+- **Build Tool**: Vite
+- **Styling**: Vanilla CSS
+- **API**: File System Access API
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 📦 インストールと起動
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+```bash
+# リポジトリのクローン
+git clone https://github.com/jacoyutorius/my_todo.git
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# ディレクトリ移動
+cd my_todo
+
+# 依存関係のインストール
+npm install
+
+# 開発サーバーの起動
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 📄 ライセンス
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+このプロジェクトは [MIT License](LICENSE) の下で公開されています。
