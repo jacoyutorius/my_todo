@@ -21,7 +21,9 @@ export const DailyView: React.FC<DailyViewProps> = ({ date, content, onSave }) =
     const newLines = [...lines];
     const line = newLines[index];
     if (line.startsWith('- [ ] ')) {
-      newLines[index] = line.replace('- [ ] ', '- [x] ');
+      const now = new Date();
+      const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      newLines[index] = line.replace('- [ ] ', '- [x] ') + ` (Completed: ${timestamp})`;
       // Trigger confetti when completing a task
       confetti({
         particleCount: 100,
@@ -29,7 +31,8 @@ export const DailyView: React.FC<DailyViewProps> = ({ date, content, onSave }) =
         origin: { y: 0.6 }
       });
     } else if (line.startsWith('- [x] ')) {
-      newLines[index] = line.replace('- [x] ', '- [ ] ');
+      // Remove completion timestamp if exists
+      newLines[index] = line.replace('- [x] ', '- [ ] ').replace(/ \(Completed: .*\)$/, '');
     }
     updateContent(newLines);
   };
