@@ -31,6 +31,11 @@ export const DailyView: React.FC<DailyViewProps> = ({ date, content, onSave }) =
         origin: { y: 0.6 }
       });
     } else if (line.startsWith('- [x] ')) {
+      // Show confirmation dialog before unchecking
+      const confirmed = window.confirm('このタスクのチェックを外しますか?');
+      if (!confirmed) {
+        return; // User cancelled, do nothing
+      }
       // Remove completion timestamp if exists
       newLines[index] = line.replace('- [x] ', '- [ ] ').replace(/ \(Completed: .*\)$/, '');
     }
